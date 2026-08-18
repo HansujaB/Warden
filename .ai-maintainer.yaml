@@ -1,0 +1,78 @@
+# .ai-maintainer.yaml
+# Single source of truth for what Warden can do autonomously.
+# Changes MUST go through a PR with maintainer review.
+# This file is listed in protected_paths — it protects itself.
+
+kill_switch: false  # flip to true to halt ALL autonomous actions immediately
+
+capabilities:
+  dep_pr:
+    auto_merge:
+      enabled: true
+      confidence_threshold: 1.0   # Tier 1 only — deterministic, always 1.0
+      rate_limit:
+        per_hour: 20
+    comment:
+      enabled: true
+      confidence_threshold: 1.0
+    escalate:
+      enabled: true
+      confidence_threshold: 1.0
+
+  stale_pr:
+    auto_rebase:
+      enabled: true
+      confidence_threshold: 1.0
+      rate_limit:
+        per_hour: 30
+    nudge:
+      enabled: true
+      confidence_threshold: 1.0
+      cooldown_hours: 48     # minimum hours between nudges on the same PR
+    comment:
+      enabled: true
+      confidence_threshold: 1.0
+
+  diff_test_map:
+    ci_trigger:
+      enabled: true
+      confidence_threshold: 1.0
+      rate_limit:
+        per_hour: 100
+
+  issue_triage:
+    label:
+      enabled: true
+      confidence_threshold: 0.80   # Tier 2 — LLM output, explicit threshold
+      rate_limit:
+        per_hour: 50
+    comment:
+      enabled: true
+      confidence_threshold: 0.80
+      rate_limit:
+        per_hour: 50
+
+  # Stretch capabilities — disabled until Phase 4
+  qa_assistant:
+    answer:
+      enabled: false
+      confidence_threshold: 0.85
+
+  repro_agent:
+    comment:
+      enabled: false
+      confidence_threshold: 0.90
+    label:
+      enabled: false
+      confidence_threshold: 0.90
+
+protected_paths:
+  # These paths are NEVER touched autonomously regardless of capability settings.
+  # Add paths here before enabling any new capability that could affect them.
+  - "SECURITY.md"
+  - ".github/CODEOWNERS"
+  - ".ai-maintainer.yaml"          # the config protects itself
+  - "config/crds/**"               # CRD changes require human review
+  - "charts/**"                    # Helm chart changes require human review
+  - ".github/workflows/**"         # CI workflow changes require human review
+  - "go.mod"                       # dependency changes with wide blast radius
