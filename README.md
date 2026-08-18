@@ -1,4 +1,4 @@
-# Warden — AI Maintainer for Kyverno
+# Warden — AI Maintainer
 
 Warden is a policy-enforcement system that automates low-judgment, high-volume maintainer work on the Kyverno repository. Every plugin produces a **proposal**, never a direct write. One guardrail gate decides. One audit log records every decision — allow or deny.
 
